@@ -1,7 +1,7 @@
 package org.example;
 
 abstract class BaseDiscount implements Discount {
-    Discount nextDiscount;
+    private final Discount nextDiscount;
 
     public BaseDiscount(Discount nextDiscount) {
         this.nextDiscount = nextDiscount;
@@ -10,6 +10,8 @@ abstract class BaseDiscount implements Discount {
     protected abstract boolean isApplicable(Product product);
 
     protected abstract double calculateDiscount(Product product);
+
+    protected abstract String getSpecificDescription();
 
     @Override
     public double apply(Product product) {
@@ -34,6 +36,4 @@ abstract class BaseDiscount implements Discount {
         }
         return description.toString().trim();
     }
-
-    protected abstract String getSpecificDescription();
 }
