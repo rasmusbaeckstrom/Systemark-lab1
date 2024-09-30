@@ -1,23 +1,23 @@
 package org.example;
 
-abstract class BaseDiscount implements Discount {
+public class BaseDiscount implements Discount {
+    private final DiscountCondition condition;
+    private final DiscountCalculator calculator;
+    private final String description;
     private final Discount nextDiscount;
 
-    public BaseDiscount(Discount nextDiscount) {
+    public BaseDiscount(DiscountCondition condition, DiscountCalculator calculator, String description, Discount nextDiscount) {
+        this.condition = condition;
+        this.calculator = calculator;
+        this.description = description;
         this.nextDiscount = nextDiscount;
     }
-
-    protected abstract boolean isApplicable(Product product);
-
-    protected abstract double calculateDiscount(Product product);
-
-    protected abstract String getSpecificDescription();
 
     @Override
     public double apply(Product product) {
         double discount = 0;
-        if (isApplicable(product)) {
-            discount += calculateDiscount(product);
+        if (condition.isApplicable(product)) {
+            discount += calculator.calculateDiscount(product);
         }
         if (nextDiscount != null) {
             discount += nextDiscount.apply(product);
@@ -27,13 +27,13 @@ abstract class BaseDiscount implements Discount {
 
     @Override
     public String getDescription(Product product) {
-        StringBuilder description = new StringBuilder();
-        if (isApplicable(product)) {
-            description.append(getClass().getSimpleName()).append(": ").append(getSpecificDescription()).append("\n");
+        StringBuilder descriptionBuilder = new StringBuilder();
+        if (condition.isApplicable(product)) {
+            descriptionBuilder.append(description).append("\n");
         }
         if (nextDiscount != null) {
-            description.append(nextDiscount.getDescription(product)).append("\n");
+            descriptionBuilder.append(nextDiscount.getDescription(product)).append("\n");
         }
-        return description.toString().trim();
+        return descriptionBuilder.toString().trim();
     }
 }
